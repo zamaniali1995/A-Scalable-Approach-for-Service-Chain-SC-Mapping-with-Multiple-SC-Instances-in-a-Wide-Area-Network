@@ -1,22 +1,18 @@
 #Author: Ali Zamnai
-#import random  ## to generate the items
 # Import PuLP modeler functions
 from pulp import * ## import pulp-or functions
-#import pandas
 import json
-import numpy
+import numpy as np
+import random  ## to generate the items
 #topo=pandas.read_csv('NSFNET.csv')
 #chains=pandas.read_csv('chains.csv')
 #prompt the user for a file to import
-#lsfkjs
 #%%
 #class Pattern:
 #    def __init__(self,placement,rout,userAssign):
 #        self.assignment=placement
 #        self.rout=rout
 #        self.userAssign=userAssign
-        
-        
 #%%	
 class MasterProblem:
     def __init__(self, input):
@@ -33,51 +29,49 @@ class MasterProblem:
 #            self.functionslist=self.functions
 #            for j in range(self.functions[i]):
 #%% init of placement matrix
-        self.placement={} 
-        for z,i in enumerate(self.chainName):
-            self.placement[i]={}
-            for x,j in enumerate(self.nodes):
-                self.placement[i][j]={}
-                for k in self.functions[z]:
-                    if x==z:
-                        self.placement[i][j][k]=1
-                    else:
-                        self.placement[i][j][k]=0
+        self.placement={}
+        for chainNum,chainName in enumerate(self.chainName):
+            temp=np.zeros((len(self.nodes),len(self.functions[chainNum])),dtype=int)
+            for func in range(len(self.functions[chainNum])):
+                node=random.randint(0, len(self.nodes)-1)
+                temp[node][func]=1
+            self.placement[chainName]=temp
+#        print(self.placement)
 #%%init of routing matrix
-        self.routing={}
-        for i,j in enumerate(self.chainName):
-            self.routing[j]={}
-            for k,l in enumerate(self.functions[i]):
-                if k == len(self.functions[i])-1:
-                    break
-                print(self.functions[i][k], self.functions[i][k+1])
-                self.routing[j][(self.functions[i][k], self.functions[i][k+1])]=\
-                
-        print("space")
-        for key in self.routing:
-            print(self.routing[key].values())
-            break
+#        self.routing={}
+#        for i,j in enumerate(self.chainName):
+#            self.routing[j]={}
+#            for k,l in enumerate(self.functions[i]):
+#                if k == len(self.functions[i])-1:
+#                    break
+#                print(self.functions[i][k], self.functions[i][k+1])
+#                self.routing[j][(self.functions[i][k], self.functions[i][k+1])]=\
+#                
+#        print("space")
+#        for key in self.routing:
+#            print(self.routing[key].values())
+#            break
 
-        self.patterns={}
-#        self.placement=[{self.nodes[0]:{}},{self.nodes[1]:(0,0,0,0,0)}]
-#        self.routing=
-#        self.userassin=
-#        self.initialPatterns=initialPatterns
-        for i in self.chainName:
-            self.patterns[i]=[]
-            for j in range(1):
-              self.patterns[i].append({('pattern',j):(self.placement[i],1,1)})
-        self.patSelect_vars = LpVariable.dict("patSelect",[])      
-        self.prob = LpProblem('ColumnGeneration',LpMinimize)	# set up the problem
-        self.obj = LpConstraintVar("obj")   # generate a constraint variable that will be used as the objective
-        self.prob.setObjective(self.obj)
-        self.PatternVars=[]
-        self.constraintList=[]   # list to save constraint variables in
+#        self.patterns={}
+##        self.placement=[{self.nodes[0]:{}},{self.nodes[1]:(0,0,0,0,0)}]
+##        self.routing=
+##        self.userassin=
+##        self.initialPatterns=initialPatterns
+#        for i in self.chainName:
+#            self.patterns[i]=[]
+#            for j in range(1):
+#              self.patterns[i].append({('pattern',j):(self.placement[i],1,1)})
+#        self.patSelect_vars = LpVariable.dict("patSelect",[])      
+#        self.prob = LpProblem('ColumnGeneration',LpMinimize)	# set up the problem
+#        self.obj = LpConstraintVar("obj")   # generate a constraint variable that will be used as the objective
+#        self.prob.setObjective(self.obj)
+#        self.PatternVars=[]
+#        self.constraintList=[]   # list to save constraint variables in
 #        self.prob += lpSum([ingredient_vars[i] for i in Ingredients]) == 1, "PercentagesSum"
 #        self.PatternVars=LpVariable.dict("P"+str(i)+str(j) for i in range(self.chainNum)	, 0, None, LpContinuous)  # create decision variable: will determine how often pattern x should be produced
 #          self.PatternVars.append(var)
 #        The objective function is added to ’self.prob’ first
-        self.prob += lpSum([])
+#        self.prob += lpSum([])
 #        self.obj = LpConstraintVar("obj")   # generate a constraint variable that will be used as the objective
 #        self.prob.setObjective(self.obj)
 #		
@@ -165,7 +159,7 @@ class MasterProblem:
 #        return pattern
 	
 #%%	main 	
-#random.seed(2012)
+random.seed(2012)
 with open("input.json", "r") as read_file:
     input = json.load(read_file)
 
