@@ -1,33 +1,20 @@
 #Author: Ali Zamnai
 # Import PuLP modeler functions
-from pulp import * ## import pulp-or functions
+from pulp import * 
 import json
 import numpy as np
-import random  ## to generate the items
-#topo=pandas.read_csv('NSFNET.csv')
-#chains=pandas.read_csv('chains.csv')
-#prompt the user for a file to import
-#%%
-#class Pattern:
-#    def __init__(self,placement,rout,userAssign):
-#        self.assignment=placement
-#        self.rout=rout
-#        self.userAssign=userAssign
+import random  ## to generate the initial patterns
 #%%	
 class MasterProblem:
     def __init__(self, input):
-        self.nodes=input['networkTopology'][0]['nodes']
-#        self.functionslist=input['functions']
+        self.nodes=input['networkTopology']['nodes']
         self.nodesNum=len(self.nodes)
-        self.links=input['networkTopology'][0]['links']
+        self.links=input['networkTopology']['links']
         self.chainNum=len(input['chains'])
         self.chainName=[input['chains'][i]['name'] for i in range(self.chainNum)]  
         self.functions=[input['chains'][i]['functions'] for i in range(self.chainNum)] 
         self.users=[input['chains'][i]['users'] for i in range(self.chainNum)]
         self.traffic=[input['chains'][i]['traffic%'] for i in range(self.chainNum)]
-#        for i in range(self.chainNum):
-#            self.functionslist=self.functions
-#            for j in range(self.functions[i]):
 #%% init of placement matrix
         self.placement={}
         for chainNum,chainName in enumerate(self.chainName):
@@ -38,7 +25,14 @@ class MasterProblem:
             self.placement[chainName]=temp
 #        print(self.placement)
 #%%init of routing matrix
-#        self.routing={}
+        self.linkMatrix=np.zeros((len(self.nodes),len(self.nodes)),dtype=int)
+        for nodeNum1,nodeName1 in enumerate(self.nodes):
+            for nodeNum2,nodeName2 in enumerate(self.links[nodeName1]):
+                for nodeNum3,nodeName3 in enumerate(self.nodes):
+                    if self.links[nodeName1][nodeNum2]==nodeName3:
+                        self.linkMatrix[nodeNum1][nodeNum3]=1
+        print (self.linkMatrix)
+#         self.routing={}
 #        for i,j in enumerate(self.chainName):
 #            self.routing[j]={}
 #            for k,l in enumerate(self.functions[i]):
@@ -160,9 +154,9 @@ class MasterProblem:
 	
 #%%	main 	
 random.seed(2012)
-with open("input.json", "r") as read_file:
+with open("input1.json", "r") as read_file:
     input = json.load(read_file)
-
+#%%
 #nrItems=5
 #lengthSheets=20
 
