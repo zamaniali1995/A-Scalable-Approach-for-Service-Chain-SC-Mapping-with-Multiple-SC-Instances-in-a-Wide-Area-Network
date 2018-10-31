@@ -1,5 +1,0 @@
-Function/Service,f1,f2,f3,f4,f5,%traffic
-WebService,NAT,FW,TM,WOC,IDPS,18.2
-VoIP,NAT,FW,TM,FW,NAT ,11.8
-VideoStreaming,NAT,FW,TM,VOC,IDPS,69.8
-OnlineGaming,NAT,FW,VOC,WOC,IDPS ,0.2
